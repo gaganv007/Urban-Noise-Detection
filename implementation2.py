@@ -85,9 +85,6 @@ def build_nn_model(input_shape, num_classes):
     return model
 
 def train_nn_model(X, y, epochs, batch_size):
-    """
-    Split the dataset, build the neural network, and train it over multiple epochs.
-    """
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=RANDOM_SEED)
     num_classes = len(np.unique(y))
     model = build_nn_model(X_train.shape[1], num_classes)
@@ -115,10 +112,6 @@ def load_nn_model(filename='nn_urbansound_model.h5'):
 
 # GEOSPATIAL VISUALIZATION
 def create_noise_map(geo_df, predictions, output_html='urban_noise_map.html'):
-    """
-    Create an interactive Folium map with markers for each audio sample.
-    Markers are color-coded based on the predicted noise class.
-    """
     colors = {0: 'green', 1: 'blue', 2: 'red', 3: 'purple', 4: 'orange', 
               5: 'darkred', 6: 'lightgray', 7: 'black', 8: 'beige', 9: 'cadetblue'}
     avg_lat = geo_df['lat'].mean()
@@ -146,7 +139,6 @@ def main():
     print("Feature extraction complete. Feature matrix shape:", X.shape)
     print("Training neural network model over multiple epochs...")
     model, X_test, y_test, history = train_nn_model(X, y, epochs=EPOCHS, batch_size=BATCH_SIZE)
-    
     save_nn_model(model)
     
     predictions = np.argmax(model.predict(X), axis=1)
