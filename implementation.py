@@ -28,18 +28,11 @@ lat_range = (40.70, 40.85)
 lon_range = (-74.02, -73.90)
 
 def load_metadata(metadata_file):
-    """
-    Load the UrbanSound8K metadata CSV into a pandas DataFrame.
-    """
     metadata = pd.read_csv(metadata_file)
     return metadata
 
 # FEATURE EXTRACTION
 def extract_features(file_path, sr=22050, n_mfcc=40):
-    """
-    Load an audio file and extract MFCC features.
-    Returns the mean of each MFCC over time.
-    """
     try:
         y, sr = librosa.load(file_path, sr=sr, duration=4.0)  # duration limited to 4 seconds
         mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)
@@ -50,11 +43,6 @@ def extract_features(file_path, sr=22050, n_mfcc=40):
     return mfccs_mean
 
 def process_dataset(metadata, base_audio_path, sample_limit=None):
-    """
-    Iterate through metadata rows to extract features and collect labels.
-    Optionally limit the number of samples.
-    Returns feature matrix X, labels y, and a DataFrame with simulated geolocations.
-    """
     features = []
     labels = []
     geo_data = []  
@@ -80,9 +68,6 @@ def process_dataset(metadata, base_audio_path, sample_limit=None):
 
 # MODEL TRAINING
 def train_model(X, y):
-    """
-    Split the dataset, train a RandomForest classifier, and return the trained model along with test data.
-    """
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=RANDOM_SEED)
     clf = RandomForestClassifier(n_estimators=100, random_state=RANDOM_SEED)
     clf.fit(X_train, y_train)
@@ -107,10 +92,6 @@ def load_model(filename='rf_urbansound_model.pkl'):
 
 # GEOSPATIAL VISUALIZATION
 def create_noise_map(geo_df, predictions, output_html='noise_map.html'):
-    """
-    Create an interactive Folium map with markers for each audio sample.
-    Markers are color-coded based on the predicted noise class.
-    """
     colors = {0: 'green', 1: 'blue', 2: 'red', 3: 'purple', 4: 'orange', 5: 'darkred', 6: 'lightgray', 7: 'black', 8: 'beige', 9: 'cadetblue'}
     avg_lat = geo_df['lat'].mean()
     avg_lon = geo_df['lon'].mean()
